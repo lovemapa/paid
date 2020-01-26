@@ -94,6 +94,23 @@ companyRoute.route('/updateCompany').
     })
   })
 
+//update User Details
+companyRoute.route('/getCompanyProfile/:userId').
+  get(companyAuth, (req, res) => {
+    companyController.getCompanyProfile(req.params.userId).then(result => {
+
+      return res.json({
+        success: CONSTANT.TRUE,
+        user: result
+      })
+    }).catch(error => {
+      console.log(error);
+
+      return res.json({ message: error, success: CONSTANT.FALSE })
+    })
+  })
+
+
 
 
 

@@ -19,6 +19,7 @@ let constant = {
     VERFIEDTRUE: 'Verfied Success',
     VERFIEDFALSE: 'tokens dont match',
     TRUEMSG: 'Successful',
+    USERIDMISSING: 'Please provide userId',
     FALSEMSG: 'Please try again later',
     SENTMSG: 'Sent successfully',
     INVALIDPARAMS: 'Invalid parameters',

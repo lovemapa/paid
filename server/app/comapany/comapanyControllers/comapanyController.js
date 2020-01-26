@@ -502,47 +502,22 @@ class userModule {
             }
         })
     }
-    // servicesList(data) {
-    //     return new Promise((resolve, reject) => {
-    //         console.log(data);
+    getCompanyProfile(id) {
+        return new Promise((resolve, reject) => {
+            if (!id) {
+                reject(CONSTANT.USERIDMISSING)
 
-    //         var LIMIT = {}
-    //         if (data.isVerified == 'false')
-    //             LIMIT = { skip: 10, limit: 5 }
-    //         console.log(LIMIT);
+            }
+            else {
+                company.findOne({ _id: id }).then(result => {
+                    resolve(result)
+                }).catch(err => {
+                    console.log(err);
 
-    //         serviceModel.find({ status: { $ne: 0 }, isDeleted: 0 }, {}, LIMIT).select('_id  firstName lastName profilePic').populate({ path: 'avgratings' }).
-    //             then(result => {
-
-    //                 resolve(result)
-    //             })
-    //             .catch(error => {
-    //                 if (error.errors)
-    //                     return reject(commonController.handleValidation(error))
-    //                 if (error)
-    //                     return reject(error)
-    //             })
-
-
-    //     })
-    // }
-    // displayProfile(_id) {
-    //     return new Promise((resolve, reject) => {
-    //         if (!_id)
-    //             reject(CONSTANT.MISSINGPARAMS)
-    //         else {
-    //             serviceModel.find({ _id: _id }).select('_id  firstName lastName profilePic twitterId eyesColor language bodyType measurments').populate({ path: 'avgratings' }).then(result => {
-    //                 resolve(result)
-    //             })
-    //                 .catch(error => {
-    //                     if (error.errors)
-    //                         return reject(commonController.handleValidation(error))
-    //                     if (error)
-    //                         return reject(error)
-    //                 })
-    //         }
-    //     })
-    // }
+                })
+            }
+        })
+    }
 
     createBooking(data) {
         return new Promise((resolve, reject) => {
