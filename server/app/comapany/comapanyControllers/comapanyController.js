@@ -504,12 +504,15 @@ class userModule {
     }
     getCompanyProfile(id) {
         return new Promise((resolve, reject) => {
+
             if (!id) {
-                reject(CONSTANT.USERIDMISSING)
+                reject(CONSTANT.NOTEXISTS)
 
             }
             else {
                 company.findOne({ _id: id }).then(result => {
+                    if (!result)
+                        reject(CONSTANT.NOTEXISTS)
                     resolve(result)
                 }).catch(err => {
                     console.log(err);

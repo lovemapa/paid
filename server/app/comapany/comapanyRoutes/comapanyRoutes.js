@@ -36,7 +36,7 @@ companyRoute.route('/register')
     }).catch(error => {
       console.log(error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
 
   })
@@ -46,13 +46,13 @@ companyRoute.route('/logout/:userId')
   .get((req, res) => {
     companyController.logout(req.params.userId).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         user: result
       })
     }).catch(error => {
       console.log(error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
 
   })
@@ -64,11 +64,11 @@ companyRoute.route('/login')
 
     companyController.login(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE, message: CONSTANT.LOGINSUCCESS, user: result
+        success: CONSTANT.TRUESTATUS, message: CONSTANT.LOGINSUCCESS, user: result
       })
     }).catch(error => {
       console.log("error", error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -82,7 +82,7 @@ companyRoute.route('/updateCompany').
     companyController.updateCompany(req.body, req.files).then(update => {
 
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         message: CONSTANT.UPDATEMSG,
         newEmail: update.newEmail,
         user: update.user
@@ -90,7 +90,7 @@ companyRoute.route('/updateCompany').
     }).catch(error => {
       console.log(error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -100,13 +100,13 @@ companyRoute.route('/getCompanyProfile/:userId').
     companyController.getCompanyProfile(req.params.userId).then(result => {
 
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         user: result
       })
     }).catch(error => {
       console.log(error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -137,14 +137,14 @@ companyRoute.route('/forget-password')
 
     companyController.forgotPassword(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         message: CONSTANT.CHANGEPASSWORDLINK
 
       })
     }).catch(error => {
       console.log("error", error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -176,12 +176,12 @@ companyRoute.route('/forgetpassword').
 //   .post((req, res) => {
 //     companyController.servicesList(req.body).then(result => {
 //       return res.send({
-//         success: CONSTANT.TRUE,
+//         success: CONSTANT.TRUESTATUS,
 //         data: result
 //       })
 //     }).catch(err => {
 //       console.log(err);
-//       return res.json({ message: err, success: CONSTANT.FALSE })
+//       return res.json({ message: err, success: CONSTANT.FALSESTATUS })
 //     })
 //   })
 
@@ -190,12 +190,12 @@ companyRoute.route('/forgetpassword').
 //   .get((req, res) => {
 //     companyController.displayProfile(req.params._id).then(result => {
 //       return res.send({
-//         success: CONSTANT.TRUE,
+//         success: CONSTANT.TRUESTATUS,
 //         data: result
 //       })
 //     }).catch(err => {
 //       console.log(err);
-//       return res.json({ message: err, success: CONSTANT.FALSE })
+//       return res.json({ message: err, success: CONSTANT.FALSESTATUS })
 //     })
 //   })
 
@@ -204,13 +204,13 @@ companyRoute.route('/createBooking')
   .post((req, res) => {
     companyController.createBooking(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         message: CONSTANT.BOOKSUCCESSFULL
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -219,12 +219,12 @@ companyRoute.route('/getRequestList')
   .post((req, res) => {
     companyController.getRequestList(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -233,13 +233,13 @@ companyRoute.route('/addFavourites')
   .patch((req, res) => {
     companyController.addFavourites(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         message: CONSTANT.ADDMSG
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -249,13 +249,13 @@ companyRoute.route('/showFavourites/:_id')
   .get((req, res) => {
     companyController.showFavourites(req.params._id).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
 
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -264,12 +264,12 @@ companyRoute.route('/removeFavourites/:serviceId')
   .delete((req, res) => {
     companyController.removeFavourites(req.params.serviceId).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         message: CONSTANT.REMOVEFAV
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -278,12 +278,12 @@ companyRoute.route('/provideServiceRatings')
   .patch((req, res) => {
     companyController.provideServiceRatings(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         message: CONSTANT.UPDATEMSG
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -292,13 +292,13 @@ companyRoute.route('/addIssue')
   .post(upload.fields([{ name: 'issueimage', maxCount: 1 }]), (req, res) => {
     companyController.addIssue(req.body, req.files).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         message: CONSTANT.ISSUESUCCESSFULLY
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -307,13 +307,13 @@ companyRoute.route('/getNearbyCars')
   .post((req, res) => {
     companyController.getNearbyCars(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         message: CONSTANT.ISSUESUCCESSFULLY
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -321,12 +321,12 @@ companyRoute.route('/changePassword').
   put((req, res) => {
     companyController.changePassword(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE, message: CONSTANT.UPDATEMSG, user: result
+        success: CONSTANT.TRUESTATUS, message: CONSTANT.UPDATEMSG, user: result
       })
     }).catch(error => {
       console.log("error", error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 // get user promo code
@@ -334,13 +334,13 @@ companyRoute.route('/getUserPromoCode')
   .post((req, res) => {
     companyController.getUserPromoCode(req.body).then((result, count) => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         count: count
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -349,13 +349,13 @@ companyRoute.route('/applyPromo').
   post((req, res) => {
     companyController.applyPromo(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
       console.log("error", error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 //Apply Coupon
@@ -364,13 +364,13 @@ companyRoute.route('/applyCoupon').
     companyController.applyCoupon(req.body).then(result => {
       return res.json({
 
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
       console.log("error", error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -381,13 +381,13 @@ companyRoute.route('/bookings')
   .post((req, res) => {
     companyController.getBookingsList(req.body).then((result, totalItem) => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         totalItem: totalItem
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -396,13 +396,13 @@ companyRoute.route('/pastBookings')
   .post((req, res) => {
     companyController.getPastBookingsList(req.body).then((result, totalItem) => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         totalItem: totalItem
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -411,14 +411,14 @@ companyRoute.route('/helpCenter').
   post(upload.fields([{ name: 'image', maxCount: 1 }]), (req, res) => {
     companyController.helpCenter(req.body, req.files).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         message: CONSTANT.HELPCENTER
       })
     }).catch(error => {
       console.log("error", error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -427,12 +427,12 @@ companyRoute.route('/rating')
   .post((req, res) => {
     companyController.rating(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -440,13 +440,13 @@ companyRoute.route('/notificationSetting')
   .post((req, res) => {
     companyController.notification(req.body).then(result => {
       return res.send({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         message: CONSTANT.NOTIFICATIONSTATUS,
         data: result
       });
     }).catch(err => {
       console.log(err);
-      return res.json({ message: err, success: CONSTANT.FALSE })
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -455,13 +455,13 @@ companyRoute.route('/booking/:bookingId')
   .get((req, res) => {
     companyController.getBookingsById(req.params.bookingId).then(item => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: item.result,
         isRated: item.isRated
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -470,12 +470,12 @@ companyRoute.route('/getUserByReferral')
   .post((req, res) => {
     companyController.getBookingsByReferral(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -484,13 +484,13 @@ companyRoute.route('/review')
   .post((req, res) => {
     companyController.getReview(req.body).then((result, count) => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         count: count
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -500,13 +500,13 @@ companyRoute.route('/getUserPromoCode')
   .post((req, res) => {
     companyController.getUserPromoCode(req.body).then((result, count) => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         count: count
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -515,24 +515,24 @@ companyRoute.route('/addPromoToUser')
   .post((req, res) => {
     companyController.addPromoToUser(req.body).then((result, count) => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result,
         count: count
       })
     }).catch(error => {
       console.log(error);
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 companyRoute.route('/cancleBooking')
   .post((req, res) => {
     companyController.cancleBooking(req.body).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
@@ -540,11 +540,11 @@ companyRoute.route('/notify')
   .get((req, res) => {
     companyController.notify().then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 //get user detail by id
@@ -552,13 +552,13 @@ companyRoute.route('/:userId')
   .get((req, res) => {
     companyController.displayUserInfo(req.params.userId).then(result => {
       return res.json({
-        success: CONSTANT.TRUE,
+        success: CONSTANT.TRUESTATUS,
         data: result
       })
     }).catch(error => {
       console.log(error);
 
-      return res.json({ message: error, success: CONSTANT.FALSE })
+      return res.json({ message: error, success: CONSTANT.FALSESTATUS })
     })
   })
 
