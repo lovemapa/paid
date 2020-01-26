@@ -12,7 +12,7 @@ const rn = require('random-number')
 const userModel = require('../../../models/company')
 const carCategoryModel = require('../../../models/carCategoryModel')
 const vehicleModel = require('../../../models/vehicleModel')
-const geolib = require('geolib');
+
 const moment = require('moment');
 const mongoose = require('mongoose');
 
@@ -119,7 +119,7 @@ class owner {
                     if (result) {
                         return resolve(await ownerModel.findByIdAndUpdate(result._id, forUpdate, { new: true }));
                     }
-                    
+
                     body.fb_id = body.fb_id;
                     body.google_id = body.google_id;
                     body.firstName = body.firstname;
@@ -128,7 +128,7 @@ class owner {
                     body.profilePic = file ? "/" + file.filename : "";
                     let user = this.createOwner(body)
                     user.save().then((result) => {
-                            resolve(result);
+                        resolve(result);
                     }).catch(error => {
                         if (error.errors)
                             return reject(commonController.handleValidation(error))
@@ -262,7 +262,7 @@ class owner {
         return new Promise((resolve, reject) => {
 
             if (!data.ownerId)
-            reject(CONSTANT.MISSINGPARAMS)
+                reject(CONSTANT.MISSINGPARAMS)
             var currentCoordinates = []
             var location = {}
             if (data.currentLat && data.currentLong) {
@@ -324,18 +324,18 @@ class owner {
             })
         })
     }
-// Delete vehicle  
+    // Delete vehicle  
     deleteVehicle(id) {
         return new Promise((resolve, reject) => {
             if (!id)
                 reject(CONSTANT.MISSINGPARAMS)
             else {
-                vehicleModel.deleteOne({_id: id}).then(del => {
+                vehicleModel.deleteOne({ _id: id }).then(del => {
                     resolve(del)
                 }).catch(error => {
-                    if(error)
+                    if (error)
                         return reject(commonController.handleValidation(error))
-                    return reject(error)                    
+                    return reject(error)
                 })
             }
         })
@@ -347,12 +347,12 @@ class owner {
             if (!id)
                 reject(CONSTANT.MISSINGPARAMS)
             else {
-                vehicleSchema.deleteOne({_id: id}).then(del => {
+                vehicleSchema.deleteOne({ _id: id }).then(del => {
                     resolve(del)
                 }).catch(error => {
-                    if(error)
+                    if (error)
                         return reject(commonController.handleValidation(error))
-                    return reject(error)                    
+                    return reject(error)
                 })
             }
         })
@@ -400,7 +400,7 @@ class owner {
                 {
                     $unwind: '$vehicleType'
                 },
-                { $sort : { _id : -1 } },
+                { $sort: { _id: -1 } },
                 {
                     $project: {
                         vehicleModel: 1,
@@ -417,21 +417,21 @@ class owner {
                 }
             ];
             console.log('.........pipeline', pipeline);
-            vehicleModel.aggregate(pipeline).skip(Number(page-1) * 10)
-            .limit(10).then(result => {
-                vehicleModel.aggregate(pipeline).then(items => {
-                    if (!result) {
-                        reject(CONSTANT.NOTREGISTERED)
-                    }
-                    else {
+            vehicleModel.aggregate(pipeline).skip(Number(page - 1) * 10)
+                .limit(10).then(result => {
+                    vehicleModel.aggregate(pipeline).then(items => {
+                        if (!result) {
+                            reject(CONSTANT.NOTREGISTERED)
+                        }
+                        else {
 
-                        resolve({result:result, count: items.length})
-                    }
+                            resolve({ result: result, count: items.length })
+                        }
+                    })
+                }).catch(err => {
+                    if (err.errors)
+                        return reject(commonController.handleValidation(error))
                 })
-            }).catch(err => {
-                if (err.errors)
-                    return reject(commonController.handleValidation(error))
-            })
 
 
         })
@@ -568,23 +568,23 @@ class owner {
                     ownerModel.findByIdAndUpdate(data.ownerId, { documentUploaded: true }, { new: true }).then(
                         (result) => {
                             console.log(result)
-                    })
-                    ownerVerfiySchema.find({ownerId: data.ownerId}).then(result => {
+                        })
+                    ownerVerfiySchema.find({ ownerId: data.ownerId }).then(result => {
                         if (result.length < 4) {
                             ownerVerfiySchema.insertMany(imagesPics).then(image => {
                                 resolve(image)
                             }).catch(error => {
                                 if (error.errors)
                                     return reject(commonController.handleValidation(error))
-        
+
                                 return reject(error)
                             })
                         } else {
                             reject(CONSTANT.YOUCANNOTUPLOADMORETHENFOUR)
                         }
-                        
+
                     });
-                   
+
                 }
 
             }
@@ -607,7 +607,7 @@ class owner {
                 }
 
                 let query = {}
-               
+
                 if (data.aboutCar)
                     query.aboutCar = data.aboutCar
                 if (data.place)
@@ -965,7 +965,7 @@ class owner {
                 reject(CONSTANT.OWNERIDMISSING)
             else {
                 var query = {}
-                if (file &&  file.profilePic) {
+                if (file && file.profilePic) {
                     file.profilePic.map(result => {
                         query.profilePic = '/' + result.filename
                     });
@@ -984,7 +984,7 @@ class owner {
 
 
                 ownerModel.findByIdAndUpdate({ _id: data.ownerId }, { $set: query }, { new: true }).then(update => {
-                        resolve(update)
+                    resolve(update)
                 }).catch(error => {
                     if (error.errors)
                         return reject(commonController.handleValidation(error))
@@ -1062,47 +1062,47 @@ class owner {
             }
         })
     }
-    
+
     ownerRatings(data) {
         return new Promise((resolve, reject) => {
             if (!data.ownerId)
                 reject(CONSTANT.MISSINGPARAMS)
-            else  {
+            else {
                 vehicleRatingModel.find({ ownerId: data.ownerId }).populate({ path: 'userId', select: 'profilePic firstName lastName' }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).then(result => {
-                    vehicleRatingModel.countDocuments({ ownerId: data.ownerId }).then( totalCount =>{
+                    vehicleRatingModel.countDocuments({ ownerId: data.ownerId }).then(totalCount => {
                         const pipeline = [
                             {
                                 $match: {
-                                    ownerId: mongoose.Types.ObjectId( data.ownerId)
+                                    ownerId: mongoose.Types.ObjectId(data.ownerId)
                                 },
                             },
-                            { 
-                                $group: {_id:null, average: {$avg:"$rating"} }
+                            {
+                                $group: { _id: null, average: { $avg: "$rating" } }
                             }
                         ];
-        
+
                         vehicleRatingModel.aggregate(pipeline).then(async rating => {
                             let averageRate = 0
 
                             if (rating && rating.length) {
                                 averageRate = rating[0].average
-                            } 
+                            }
 
-                            let totalBooking = await bookingModel.find({ownerId: data.ownerId});
-                                totalBooking = totalBooking.length;
-                            
-                            let totalCancelBooking = await bookingModel.find({ownerId: data.ownerId, status: CONSTANT.BOOKING_STATUS.CANCEL });
-                                totalCancelBooking = totalCancelBooking.length;
+                            let totalBooking = await bookingModel.find({ ownerId: data.ownerId });
+                            totalBooking = totalBooking.length;
 
-                            let totalCompleteBooking = await bookingModel.find({ownerId: data.ownerId, status: CONSTANT.BOOKING_STATUS.COMPLETED });
-                                totalCompleteBooking = totalCompleteBooking.length;
-                               
+                            let totalCancelBooking = await bookingModel.find({ ownerId: data.ownerId, status: CONSTANT.BOOKING_STATUS.CANCEL });
+                            totalCancelBooking = totalCancelBooking.length;
+
+                            let totalCompleteBooking = await bookingModel.find({ ownerId: data.ownerId, status: CONSTANT.BOOKING_STATUS.COMPLETED });
+                            totalCompleteBooking = totalCompleteBooking.length;
+
                             let cancleBookingPer = (totalCancelBooking * 100) / totalBooking;
                             let completeBookingPer = (totalCompleteBooking * 100) / totalBooking;
 
-                            return resolve({result, totalCount, averageRate, cancleBookingPer, completeBookingPer})
-        
-                       })
+                            return resolve({ result, totalCount, averageRate, cancleBookingPer, completeBookingPer })
+
+                        })
                     })
                 }).catch(error => {
                     if (error.errors)
@@ -1170,9 +1170,9 @@ class owner {
         return new Promise((resolve, reject) => {
             if (!data.ownerId)
                 reject(CONSTANT.OWNERIDMISSING)
-            notificationModel.find({ assignedId: data.ownerId }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).sort({"_id":-1}).then(result => {
-                notificationModel.countDocuments({ assignedId: data.ownerId }).then( totalCount =>{
-                    return resolve({result, totalCount})
+            notificationModel.find({ assignedId: data.ownerId }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).sort({ "_id": -1 }).then(result => {
+                notificationModel.countDocuments({ assignedId: data.ownerId }).then(totalCount => {
+                    return resolve({ result, totalCount })
                 })
             }).catch(err => {
                 if (err.errors)
@@ -1184,12 +1184,12 @@ class owner {
     //get bookin List of owner
     getOwnerBooking(data) {
         return new Promise(async (resolve, reject) => {
-            
+
             if (!data.ownerId)
                 reject(CONSTANT.OWNERIDMISSING)
-            bookingModel.find({ ownerId: data.ownerId, status: { $in: [ CONSTANT.BOOKING_STATUS.PENDING, CONSTANT.BOOKING_STATUS.ACCEPTED, CONSTANT.BOOKING_STATUS.PICKUP_IN_PROGRESS, CONSTANT.BOOKING_STATUS.TRIP_IN_PROGRESS ] } }).populate({ path: 'vehicleId', select: 'carName vehicleModel',  populate: [{path:'carTypeId', select: 'type'}, {path:'vehicleTypeId', select: 'carType'}]}).sort({"_id":-1}).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).then(result => {
-                bookingModel.countDocuments({ ownerId: data.ownerId, status: { $in: [ CONSTANT.BOOKING_STATUS.PENDING, CONSTANT.BOOKING_STATUS.ACCEPTED, CONSTANT.BOOKING_STATUS.PICKUP_IN_PROGRESS, CONSTANT.BOOKING_STATUS.TRIP_IN_PROGRESS ] } }).then( totalCount =>{
-                    return resolve({result, totalCount})
+            bookingModel.find({ ownerId: data.ownerId, status: { $in: [CONSTANT.BOOKING_STATUS.PENDING, CONSTANT.BOOKING_STATUS.ACCEPTED, CONSTANT.BOOKING_STATUS.PICKUP_IN_PROGRESS, CONSTANT.BOOKING_STATUS.TRIP_IN_PROGRESS] } }).populate({ path: 'vehicleId', select: 'carName vehicleModel', populate: [{ path: 'carTypeId', select: 'type' }, { path: 'vehicleTypeId', select: 'carType' }] }).sort({ "_id": -1 }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).then(result => {
+                bookingModel.countDocuments({ ownerId: data.ownerId, status: { $in: [CONSTANT.BOOKING_STATUS.PENDING, CONSTANT.BOOKING_STATUS.ACCEPTED, CONSTANT.BOOKING_STATUS.PICKUP_IN_PROGRESS, CONSTANT.BOOKING_STATUS.TRIP_IN_PROGRESS] } }).then(totalCount => {
+                    return resolve({ result, totalCount })
                 })
             }).catch(err => {
                 if (err.errors)
@@ -1203,9 +1203,9 @@ class owner {
         return new Promise((resolve, reject) => {
             if (!data.ownerId)
                 reject(CONSTANT.OWNERIDMISSING)
-            bookingModel.find({ ownerId: data.ownerId, status: { $in: [ CONSTANT.BOOKING_STATUS.REJECTED, CONSTANT.BOOKING_STATUS.COMPLETED, CONSTANT.BOOKING_STATUS.CLOSED ] } }).populate({ path: 'vehicleId', select: 'carName vehicleModel',  populate: [{path:'carTypeId', select: 'type'}, {path:'vehicleTypeId', select: 'carType'}]}).sort({"_id":-1}).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).then(result => {
-                bookingModel.countDocuments({ ownerId: data.ownerId, status: { $in: [ CONSTANT.BOOKING_STATUS.REJECTED, CONSTANT.BOOKING_STATUS.COMPLETED, CONSTANT.BOOKING_STATUS.CLOSED ] } }).then( totalCount =>{
-                    return resolve({result, totalCount})
+            bookingModel.find({ ownerId: data.ownerId, status: { $in: [CONSTANT.BOOKING_STATUS.REJECTED, CONSTANT.BOOKING_STATUS.COMPLETED, CONSTANT.BOOKING_STATUS.CLOSED] } }).populate({ path: 'vehicleId', select: 'carName vehicleModel', populate: [{ path: 'carTypeId', select: 'type' }, { path: 'vehicleTypeId', select: 'carType' }] }).sort({ "_id": -1 }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).then(result => {
+                bookingModel.countDocuments({ ownerId: data.ownerId, status: { $in: [CONSTANT.BOOKING_STATUS.REJECTED, CONSTANT.BOOKING_STATUS.COMPLETED, CONSTANT.BOOKING_STATUS.CLOSED] } }).then(totalCount => {
+                    return resolve({ result, totalCount })
                 })
             }).catch(err => {
                 if (err.errors)
@@ -1216,13 +1216,13 @@ class owner {
 
     getBookingsById(bookingId) {
 
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (!bookingId)
                 reject(CONSTANT.MISSINGPARAMS)
             else {
-                var booking = await bookingModel.findById(bookingId); 
+                var booking = await bookingModel.findById(bookingId);
                 var vehicleInfo = await vehicleModel.findById(booking.vehicleId);
-                
+
                 const pipeline = [
                     // {
                     //     $geoNear: {
@@ -1258,15 +1258,15 @@ class owner {
                     },
                     {
                         $unwind: {
-                          path: "$vehicle"
+                            path: "$vehicle"
                         }
                     },
                     {
                         $unwind: {
-                          path: "$owners"
+                            path: "$owners"
                         }
                     },
-                    
+
                     // {
                     //     $lookup:{
                     //         from: "vehicleimages",
@@ -1276,7 +1276,7 @@ class owner {
                     //     }
                     // },
                     {
-                        $lookup:{
+                        $lookup: {
                             from: "carcategories",
                             localField: "vehicle.vehicleTypeId",
                             foreignField: "_id",
@@ -1284,7 +1284,7 @@ class owner {
                         }
                     },
                     {
-                        $lookup:{
+                        $lookup: {
                             from: "vehicletypes",
                             localField: "vehicle.carTypeId",
                             foreignField: "_id",
@@ -1292,7 +1292,7 @@ class owner {
                         }
                     },
                     {
-                        $lookup:{
+                        $lookup: {
                             from: "pickdetails",
                             localField: "_id",
                             foreignField: "bookingId",
@@ -1310,24 +1310,24 @@ class owner {
                     },
                     {
                         $unwind: {
-                          path: "$vehicle.vehicleTypeDetails"
+                            path: "$vehicle.vehicleTypeDetails"
                         }
                     },
                     {
                         $unwind: {
-                          path: "$vehicle.carType"
+                            path: "$vehicle.carType"
                         }
                     },
                     {
                         $addFields: {
                             ownerAvgRating: { $avg: "$ownerRatings.rating" }
-                          }
+                        }
                     },
                     {
                         $addFields: {
                             notes: "$pickdetails.notes"
                         }
-                    }, 
+                    },
                     {
                         $addFields: {
                             specialRequest: "$pickdetails.specialRequest"
@@ -1363,10 +1363,10 @@ class owner {
                             ownerAvgRating: 1,
                             owners: 1,
                             startTime: 1,
-                            name:{$cond:{if:{$size:"$name"},then: {$arrayElemAt:["$name",0]},else :''}},
-                            notes:{$cond:{if:{$size:"$notes"},then: {$arrayElemAt:["$notes",0]},else :''}},
-                            specialRequest:{$cond:{if:{$size:"$specialRequest"},then: {$arrayElemAt:["$specialRequest",0]},else :''}},
-                            contact:{$cond:{if:{$size:"$contact"},then: {$arrayElemAt:["$contact",0]},else :''}}
+                            name: { $cond: { if: { $size: "$name" }, then: { $arrayElemAt: ["$name", 0] }, else: '' } },
+                            notes: { $cond: { if: { $size: "$notes" }, then: { $arrayElemAt: ["$notes", 0] }, else: '' } },
+                            specialRequest: { $cond: { if: { $size: "$specialRequest" }, then: { $arrayElemAt: ["$specialRequest", 0] }, else: '' } },
+                            contact: { $cond: { if: { $size: "$contact" }, then: { $arrayElemAt: ["$contact", 0] }, else: '' } }
                         }
                     }
                 ];
@@ -1391,24 +1391,24 @@ class owner {
             console.log(data)
             if (!data.ownerId)
                 reject(CONSTANT.OWNERIDMISSING)
-            
+
             var start = moment().startOf('day'); // set to 12:00 am today
             var end = moment().endOf('day');
 
             if (data.type == "month") {
                 start = moment().startOf('month');
-                end   = moment().endOf('month');
-            } 
+                end = moment().endOf('month');
+            }
 
-            if(data.type == 'week') {
+            if (data.type == 'week') {
                 start = moment().startOf('week');
                 end = moment().endOf('week');
             }
-            
+
             let query = {
-                ownerId: data.ownerId, 
+                ownerId: data.ownerId,
                 status: CONSTANT.BOOKING_STATUS.COMPLETED,
-                createdAt: { 
+                createdAt: {
                     $gte: start,
                     $lt: end
                 }
@@ -1422,9 +1422,9 @@ class owner {
                 security: 1,
                 estimatedPrice: 1,
                 address: 1
-            }).populate({path: 'vehicleId', select: {hourlyRate: 1, dayRate: 1, carName: 1}, populate:[ {path: 'vehicleTypeId', select: {carType: 1}}, {path: 'carTypeId', select: {type: 1}}] }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).sort({"_id":-1}).then(result => {
-                bookingModel.countDocuments(query).then( totalCount =>{
-                    return resolve({result, totalCount})
+            }).populate({ path: 'vehicleId', select: { hourlyRate: 1, dayRate: 1, carName: 1 }, populate: [{ path: 'vehicleTypeId', select: { carType: 1 } }, { path: 'carTypeId', select: { type: 1 } }] }).skip(Number(data.page - 1) * Number(10)).limit(Number(10)).sort({ "_id": -1 }).then(result => {
+                bookingModel.countDocuments(query).then(totalCount => {
+                    return resolve({ result, totalCount })
                 })
             }).catch(err => {
                 if (err.errors)
@@ -1432,6 +1432,6 @@ class owner {
             })
         })
     }
-    
+
 }
 module.exports = new owner();
