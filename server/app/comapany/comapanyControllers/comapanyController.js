@@ -471,6 +471,13 @@ class userModule {
                                 query.profilePic = '/' + result.filename
                             });
                         }
+                        if (data.password && data.confirmPassword) {
+                            if (data.password != data.confirmPassword) {
+                                reject("Passwords don't match")
+                            }
+                            else
+                                query.password = commonFunctions.hashPassword(data.password)
+                        }
                         if (data.firstName)
                             query.firstName = data.firstName
                         if (data.lastName)
