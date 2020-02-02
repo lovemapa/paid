@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
         influencerToken = credentials;
     } else {
         return res.status(403).json({
-            resStatus: 0, resMessage: 'ACCESS DENIED !! You are not authorize to access this Resource',
+            resStatus: 0, resMessage: 'ACCESS DENIED !! Token is missing',
         });
     }
     Jwt.verify(token, privateKey, (err, token) => {

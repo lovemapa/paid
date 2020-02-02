@@ -1,5 +1,5 @@
 const socketController = require('../Socket/socketController')
-const userController = require('../comapany/comapanyControllers/comapanyController')
+const userController = require('../company/comapanyControllers/comapanyController')
 
 const soc = new socketController();
 
@@ -7,7 +7,7 @@ module.exports = (io) => {
     var socketInfo = {};
     var rooms = [];
     var room_members = {}
-    userController.cronJob(io)
+
 
     io.on('connection', function (socket) {
         console.log('Someone connected');

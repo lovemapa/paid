@@ -2,6 +2,8 @@ let constant = {
     TRUESTATUS: 1,
     FALSESTATUS: 0,
     MISSINGPARAMS: 'Please provide  params',
+    MISSINGCOMPANYID: "Please provide company Id",
+    MISSINGUTYPENAME: 'Please Provide type',
     EVENTALREADYADDED: 'Event exists',
     MISSINGEVENT: 'Please provide  event type',
     MISSINGVEHCILE: 'Either missing VehicleID or (Address latitude or longitude) or UserId',

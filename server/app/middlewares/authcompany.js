@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
         companyToken = credentials;
     } else {
         return res.status(403).json({
-            resStatus: 0, resMessage: 'ACCESS DENIED !! You are not authorize to access this Resource',
+            resStatus: 0, resMessage: 'ACCESS DENIED !! Token is missing',
         });
     }
     Jwt.verify(token, privateKey, (err, token) => {
@@ -25,6 +25,7 @@ module.exports = (req, res, next) => {
                 if (!user) { return res.json({ status: 2, message: "Loggin on Other Device" }) }
 
                 req.token = token;
+                req.headers.userId = token.id
                 req.companyToken = companyToken
                 next()
             })

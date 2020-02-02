@@ -2,9 +2,11 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const sgTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
-const apiUrl = 'http://13.232.208.65:4002';
-const smtpEmail = 'pk1605199432@gmail.com';
-const smtpPass = 'lovemapa!23';
+// const apiUrl = 'http://13.232.208.65:4002';
+const apiUrl = 'http://localhost:4002';
+
+const smtpEmail = 'kumar16.pawan@gmail.com';
+const smtpPass = 'niti!234';
 
 const FCM = require("fcm-node");
 const serverKey = "AIzaSyD7QbU83dWivM5qiPSPRlYwuHWhx4AWMsc"; //put your server key here
@@ -46,10 +48,10 @@ class commonController {
     sendMail(email, _id, token, type, cb) {
 
         var route;
-        if (type == 'user')
-            route = 'user'
+        if (type == 'company')
+            route = 'company'
         else
-            route = 'owner'
+            route = 'influencer'
         var html, subject
         if (_id == undefined || token == undefined) {
             subject = 'Account verifciation'
@@ -135,16 +137,16 @@ class commonController {
 
     notification(message) {
         return new Promise((resolve, reject) => {
-          fcm.send(message, function(err, response) {
-            if (err) {
-              console.log("Something has gone wrong!", err);
-              return reject(err);
-            } else {
-              resolve(response);
-            }
-          });
+            fcm.send(message, function (err, response) {
+                if (err) {
+                    console.log("Something has gone wrong!", err);
+                    return reject(err);
+                } else {
+                    resolve(response);
+                }
+            });
         });
-      }
+    }
 
 }
 

@@ -1,5 +1,6 @@
 'use strict'
 const company = require('../../../models/company')
+const campaign = require('../../../models/campaign')
 const ownerModel = require('../../../models/ownerModel')
 const CONSTANT = require('../../../constant')
 const commonFunctions = require('../../common/controllers/commonFunctions')
@@ -19,7 +20,7 @@ const vehicleRatingModel = require('../../../models/vehicleRatingModel')
 const pickModel = require('../../../models/pickupModel')
 const helpCenterModel = require('../../../models/helpCenterModel')
 const bookingModel = require('../../../models/bookingModel')
-let CronJob = require('cron').CronJob;
+
 const mongoose = require('mongoose');
 
 class userModule {
@@ -114,20 +115,23 @@ class userModule {
                 if (user) {
 
                     const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
-                    company.findOneAndUpdate({ email: data.email }, { $set: { token: token } }, { new: true }).then(updateResult => {
+                    company.findOneAndUpdate({ email: data.email },
+                        { $set: { token: token } },
 
+                        { new: true }).select('token password email firstName lastName')
 
+                        .then(updateResult => {
 
-                        if (commonFunctions.compareHash(data.password, updateResult.password)) {
-                            {
-                                resolve(updateResult)
+                            if (commonFunctions.compareHash(data.password, updateResult.password)) {
+                                {
+                                    resolve(updateResult)
+                                }
+                            } else {
+
+                                reject(CONSTANT.WRONGCREDENTIALS)
                             }
-                        } else {
 
-                            reject(CONSTANT.WRONGCREDENTIALS)
-                        }
-
-                    })
+                        })
                 }
                 else {
                     reject(CONSTANT.NOTREGISTERED)
@@ -372,7 +376,7 @@ class userModule {
                     company.findOneAndUpdate({ email: data.email }, { $set: { token: token } }).then(updateToken => {
                         resolve(CONSTANT.VERIFYMAIL)
                     })
-                    commonController.sendMail(data.email, result._id, token, 'user', (result) => {
+                    commonController.sendMail(data.email, result._id, token, 'company', (result) => {
 
                         if (result.status === 1)
                             console.log(result.message.response);
@@ -490,19 +494,21 @@ class userModule {
                             query.email = data.email
 
 
-                        company.findByIdAndUpdate({ _id: data.userId }, { $set: query }, { new: true }).then(update => {
-                            if (update) {
-                                resolve({ user: update })
-                            } else {
-                                reject(CONSTANT.NOTEXISTS)
-                            }
+                        company.findByIdAndUpdate({ _id: data.userId }, { $set: query }, { new: true }).
+                            select().
+                            then(update => {
+                                if (update) {
+                                    resolve({ user: update })
+                                } else {
+                                    reject(CONSTANT.NOTEXISTS)
+                                }
 
-                        }).catch(error => {
-                            if (error.errors)
-                                return reject(commonController.handleValidation(error))
-                            if (error)
-                                return reject(error)
-                        })
+                            }).catch(error => {
+                                if (error.errors)
+                                    return reject(commonController.handleValidation(error))
+                                if (error)
+                                    return reject(error)
+                            })
                     }
                 })
 
@@ -520,6 +526,24 @@ class userModule {
                 company.findOne({ _id: id }).then(result => {
                     if (!result)
                         reject(CONSTANT.NOTEXISTS)
+                    resolve(result)
+                }).catch(err => {
+                    console.log(err);
+
+                })
+            }
+        })
+    }
+
+    getCampaigns(id) {
+        return new Promise((resolve, reject) => {
+
+            if (!id) {
+                reject(CONSTANT.MISSINGCOMPANYID)
+
+            }
+            else {
+                campaign.findOne({ companyId: id }).select('_id name brandPromoting dateForContentLive').then(result => {
                     resolve(result)
                 }).catch(err => {
                     console.log(err);
@@ -826,65 +850,6 @@ class userModule {
                     })
             }
         })
-    }
-    cronJob(io) {
-        new CronJob('* * * * *', function () {
-            bookingModel.find({ status: CONSTANT.BOOKING_STATUS.PENDING }).then(result => {
-
-                result.forEach(value => {
-                    if (((Date.now() - value.createdAt) / 60000) > 5) {
-                        bookingModel.updateMany({ _id: value._id }, { $set: { status: CONSTANT.BOOKING_STATUS.REJECTED, ratings: -1 } }, { multi: true }).
-                            then(updateResult => {
-                                console.log(updateResult);
-                            })
-                    }
-                })
-            })
-
-            bookingModel.find({ status: CONSTANT.BOOKING_STATUS.ACCEPTED }).then(result => {
-
-                // Use of Date.now() function 
-                // var oldDateObj = new Date();
-                var newDateObj = new Date();
-                // var dateObj = new Date();
-                // newDateObj.setTime(oldDateObj.getTime() + (3 * 60 * 1000));
-                // dateObj.setTime(oldDateObj.getTime() - (1 * 60 * 1000));
-                var milliseconds = newDateObj.getTime();
-                result.forEach(value => {
-
-                    if (value.startTime <= milliseconds) {
-
-                        bookingModel.updateMany({ _id: value._id }, { $set: { status: CONSTANT.BOOKING_STATUS.TRIP_IN_PROGRESS } }, { multi: true }).
-                            then(updateResult => {
-                                const notifyOwner = new notificationModel({
-                                    typeId: value._id,
-                                    type: 'booking',
-                                    title: 'Your booking is started',
-                                    description: 'Your booking is started',
-                                    assignedId: value.ownerId
-                                });
-                                notifyOwner.save({}).then(notifyDetails => {
-                                    console.log('notifyDetails')
-                                })
-                                const notifyUser = new notificationModel({
-                                    typeId: value._id,
-                                    type: 'booking',
-                                    title: 'Your booking is started',
-                                    description: 'Your booking is started',
-                                    assignedId: value.userId
-                                });
-                                notifyUser.save({}).then(notifyDetails => {
-                                    console.log('notifyDetails')
-                                })
-                                if (value.userId && value.ownerId) {
-                                    io.emit(`${value.userId}startBooking`, { status: CONSTANT.TRUE, booking: value, message: "Booking is started" });
-                                    io.emit(`${value.ownerId}startBooking`, { status: CONSTANT.TRUE, booking: value, message: "Booking is started" });
-                                }
-                            })
-                    }
-                })
-            })
-        }, null, true, 'America/Los_Angeles');
     }
 
     applyCoupon(data) {

@@ -79,6 +79,7 @@ companyRoute.route('/login')
 //update User Details
 companyRoute.route('/updateCompany').
   put(companyAuth, upload.fields([{ name: 'profilePic', maxCount: 1 }]), (req, res) => {
+    req.body.userId = req.headers.userId
     companyController.updateCompany(req.body, req.files).then(update => {
 
       return res.json({
@@ -95,9 +96,9 @@ companyRoute.route('/updateCompany').
   })
 
 //update User Details
-companyRoute.route('/getCompanyProfile/:userId').
+companyRoute.route('/getCompanyProfile').
   get(companyAuth, (req, res) => {
-    companyController.getCompanyProfile(req.params.userId).then(result => {
+    companyController.getCompanyProfile(req.headers.userId).then(result => {
 
       return res.json({
         success: CONSTANT.TRUESTATUS,
@@ -163,7 +164,7 @@ companyRoute.route('/forgetpassword').
         }
         req.flash('errm', err)
 
-        let url = `/api/user/forgetpassword?token=${req.query.token}&user=${req.query.user}`
+        let url = `/company/forgetpassword?token=${req.query.token}&user=${req.query.user}`
         res.redirect(url)
       }
     )
@@ -198,6 +199,22 @@ companyRoute.route('/forgetpassword').
 //       return res.json({ message: err, success: CONSTANT.FALSESTATUS })
 //     })
 //   })
+
+
+//Create Booking
+companyRoute.route('/getCampaigns')
+  .get(companyAuth, (req, res) => {
+    companyController.getCampaigns(req.headers.userId).then(result => {
+      return res.send({
+        success: CONSTANT.TRUESTATUS,
+        data: result,
+      })
+    }).catch(err => {
+      console.log(err);
+      return res.json({ message: err, success: CONSTANT.FALSESTATUS })
+    })
+  })
+
 
 //Create Booking
 companyRoute.route('/createBooking')

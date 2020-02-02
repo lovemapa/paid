@@ -17,5 +17,5 @@ var companyModelSchema = new Schema({
 
 }, { timestamps: true })
 
-module.exports = mongoose.model('user', companyModelSchema);
+module.exports = mongoose.model('company', companyModelSchema);
 

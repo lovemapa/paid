@@ -5,42 +5,29 @@ const Schema = mongoose.Schema;
 
 
 var campaignModelSchema = new Schema({
+    companyId: { type: Schema.ObjectId, ref: 'company' },
     name: { type: String, required: true },
     awareness: { type: String },
-    consideration: { type: String },
-    acquisition: { type: String },
+    consideration: { type: Number },// 1 for CPC , // 2 for CPE
+    acquisition: { type: Number }, // 1 for CPA , 2 for CPI
     brandPromoting: { type: String },
     dateForContentLive: { type: Number },
     genderType: { type: String },
-    ageGroups: { type: Number },
+    ageGroups: [{ type: Number }],
+    creatorNiche: [{ type: String }],
+    targetLocation: [{ type: String }],
+    targetLanguage: [{ type: String, enum: ['English', 'Spanish', 'French'], default: 'English' }],
+    followingSize: { type: Number, default: 2 },
+    contentsFormat: [{ type: String, enum: ['Stories', 'Photos', 'Videos', 'Caraousels'] }],
+    campaignBudget: Number,
+    organicPost: Number,
+    whiteListBudget: Number,
+    requirement: String,
+    content: String,
+    hashtag: [String]
 
-    vehicleId: { type: Schema.ObjectId, ref: 'vehicle' },
-    ownerId: { type: Schema.ObjectId, ref: 'owner' },
-    typeOfEvent: { type: String },
-    address: { type: String, default: '' },
-    startTime: { type: Number },
-    endTime: { type: Number },
-    currentCoordinates: [{ type: Number }],
-    location: {
-        type: {
-            type: String, default: "Point"
-        },
-        coordinates: [Number]
-    },
-    currentLat: { type: Number },
-    currentLong: { type: Number },
-    userId: { type: Schema.ObjectId, ref: 'user' },
-    trackImage: { type: String },
-    status: { type: Number, enum: constants.BOOKING_STATUS_ARR, default: constants.BOOKING_STATUS.PENDING },
-    isPaid: { type: Boolean, default: false },
-    date: { type: Number },
-    price: { type: Number, default: '' },
-    tax: { type: Number, default: '' },
-    commission: { type: Number, default: '' },
-    security: { type: Number, default: '' },
-    promoCode: { type: String },
-    estimatedPrice: { type: Number },
-    reason: { type: String }
+
+
 }, { timestamps: true })
 
 
