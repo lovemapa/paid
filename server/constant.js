@@ -13,6 +13,7 @@ let constant = {
     NOCONTACTS: 'Phone Number not associated with any account',
     TRUE: true,
     FALSE: false,
+    EMAILMISS: "Email Missing",
     NOTEXISTS: 'User doesnt exist',
     VEHCILEADDSUCEESS: "Vehicle added successfully",
     USERADDSUCEESS: "User added successfully",

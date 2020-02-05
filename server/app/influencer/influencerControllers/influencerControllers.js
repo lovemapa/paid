@@ -1,5 +1,5 @@
 'use strict'
-const ownerModel = require('../../../models/ownerModel')
+const influnce = require('../../../models/influencer')
 const CONSTANT = require('../../../constant')
 const commonFunctions = require('../../common/controllers/commonFunctions')
 const commonController = require('../../common/controllers/commonController')
@@ -12,83 +12,51 @@ const rn = require('random-number')
 const userModel = require('../../../models/company')
 const carCategoryModel = require('../../../models/carCategoryModel')
 const vehicleModel = require('../../../models/vehicleModel')
-
+const Jwt = require('jsonwebtoken');
 const moment = require('moment');
+const privateKey = 'myprivatekey'
 const mongoose = require('mongoose');
 
 class owner {
 
-    //Owner Signup
+    signUp(data) {
 
-    signUp(data, files) {
+
         return new Promise((resolve, reject) => {
-            if (!data.email || !data.password || !files) {
-                reject(CONSTANT.MISSINGPARAMSORFILES)
+
+            if (!data.email) {
+                reject(CONSTANT.EMAILMISS)
             }
             else {
-
                 // check if already exists
                 let checkCriteria = {
-                    $or: [
-                        { email: data.email },
-                        {
-                            contact: data.contact,
-                            countryCode: data.countryCode
-                        }
-                    ],
+                    email: data.email,
                     isDeleted: false
                 };
-                ownerModel.count(checkCriteria).then(result => {
+                influnce.count(checkCriteria).then(async result => {
                     if (result) {
                         return reject(CONSTANT.UNIQUEEMAILANDUSERNAME)
                     } else {
-                        const token = rn({
-                            min: 1001,
-                            max: 9999,
-                            integer: true
-                        })
-                        if (files && files.profilePic) {
-                            files.profilePic.map(result => {
-                                data.profilePic = '/' + result.filename
+                        if (data.password)
+                            data.password = commonFunctions.hashPassword(data.password)
+                        const user = new influnce(data)
+                        const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
+                        user.set('token', token, { strict: false })
+                        user.save().then((saveresult) => {
+                            resolve({ success: CONSTANT.TRUESTATUS, result: saveresult })
 
-                            });
-                        }
-
-                        data.token = token
-
-                        const owner = new ownerModel({
-                            email: data.email,
-                            firstName: data.firstName,
-                            lastName: data.lastName,
-                            profilePic: data.profilePic,
-
-                            password: commonFunctions.hashPassword(data.password),
-                            token: token,
-                            countryCode: data.countryCode,
-                            contact: data.contact,
-                            deviceType: data.deviceType,
-                            deviceId: data.deviceId,
-                            date: moment().valueOf()
-                        })
-                        owner.save().then((saveresult) => {
-                            resolve({ message: CONSTANT.VERIFYMAIL, result: saveresult })
-                            commonController.sendMailandVerify(saveresult.email, saveresult._id, token, 'owner', result => {
-                                if (result.status === 1)
-                                    console.log(result.message.response);
-                                else
-                                    reject(result.message)
-                            })
                         }).catch(error => {
-
                             if (error.errors)
                                 return reject(commonController.handleValidation(error))
                             return reject(error)
                         })
+                        user
                     }
                 });
             }
         })
     }
+
 
     sociallogin(body, file) {
         return new Promise((resolve, reject) => {
@@ -694,36 +662,50 @@ class owner {
 
     // Owner Login
     login(data) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (!data.email || !data.password) {
                 reject(CONSTANT.MISSINGPARAMS)
             }
 
             else {
-                ownerModel.findOneAndUpdate({ email: data.email }, { $set: { deviceId: data.deviceId } }, { new: true }).then(result => {
-                    if (!result) {
-                        reject(CONSTANT.NOTREGISTERED)
-                    }
-                    else {
-                        if (commonFunctions.compareHash(data.password, result.password) && result.isAdminVerified && result.isVerified) {
-                            resolve(result)
-                        }
-                        else {
-                            if (!result.isVerified)
-                                reject(CONSTANT.NOTVERIFIED)
-                            else if (!result.isAdminVerified && !result.documentUploaded)
-                                resolve(result)
-                            else if (!result.isAdminVerified)
-                                reject(CONSTANT.NOTADMINVERIFIED)
-                            else
+
+                const user = await influnce.findOne({ email: data.email })
+                if (user) {
+
+
+                    const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
+
+                    console.log(token);
+                    influnce.findOneAndUpdate({ email: data.email },
+                        { $set: { token: token } },
+
+                        { new: true }).select('token password email firstName lastName')
+
+                        .then(updateResult => {
+                            console.log(updateResult);
+
+                            // console.log(commonFunctions.compareHash(data.password, updateResult.password));
+
+                            if (commonFunctions.compareHash(data.password, updateResult.password)) {
+                                {
+                                    resolve(updateResult)
+                                }
+                            } else {
+
                                 reject(CONSTANT.WRONGCREDENTIALS)
-                        }
-                    }
-                })
+                            }
+
+                        })
+                }
+                else {
+                    reject(CONSTANT.NOTREGISTERED)
+                }
+
             }
 
         })
     }
+
 
 
     forgotPassword(data) {

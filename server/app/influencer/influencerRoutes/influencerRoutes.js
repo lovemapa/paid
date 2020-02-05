@@ -1,5 +1,5 @@
 const express = require('express')
-const ownerController = require('../influencerControllers/influencerControllers')
+const influencerController = require('../influencerControllers/influencerControllers')
 const CONSTANT = require('../../../constant')
 const rn = require('random-number')
 const multer = require('multer');
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
             rn({
                 min: 1001,
                 max: 9999,
-                integer: true
+                integer: TRUESTATUS
             }) +
             "_" +
             Date.now() +
@@ -25,16 +25,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage })
 
-let ownerRoute = express.Router()
+let influencer = express.Router()
 
 
-//Owner Register
+//Inflencer Register
 
-ownerRoute.route('/signup')
-    .post(upload.fields([{ name: 'profilePic', maxCount: 1 }, { name: 'verificationPhotos', maxCount: 6 }]), (req, res) => {
-        ownerController.signUp(req.body, req.files).then(result => {
+influencer.route('/signup')
+    .post((req, res) => {
+        influencerController.signUp(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result.result,
                 message: result.message,
 
@@ -42,107 +42,107 @@ ownerRoute.route('/signup')
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
-    ownerRoute.route('/logout/:ownerId')
+influencer.route('/logout/:ownerId')
     .get((req, res) => {
-        ownerController.logout(req.params.ownerId).then(result => {
-        return res.json({
-          success: CONSTANT.TRUE, 
-          user: result
+        influencerController.logout(req.params.ownerId).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                user: result
+            })
+        }).catch(error => {
+            console.log(error);
+
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-      }).catch(error => {
-        console.log(error);
-    
-        return res.json({ message: error, success: CONSTANT.FALSE })
-      })
-    
+
     })
 //socaillogin 
-ownerRoute.post("/sociallogin", upload.single('profilePic'), (req, res) => {
+influencer.post("/sociallogin", upload.single('profilePic'), (req, res) => {
     let body = req.body;
-    ownerController
-      .sociallogin(body, req.file)
-      .then(result => {
-        console.log(result);
-        
-        res.json({ success: CONSTANT.TRUE, message: "Login successfully", "data": result });
-      })
-      .catch(err => {
-        res.json({ success: CONSTANT.FALSE, message: err });
-      });
-  });
-  
+    influencerController
+        .sociallogin(body, req.file)
+        .then(result => {
+            console.log(result);
+
+            res.json({ success: CONSTANT.TRUESTATUS, message: "Login successfully", "data": result });
+        })
+        .catch(err => {
+            res.json({ success: CONSTANT.FALSESTATUS, message: err });
+        });
+});
+
 
 //Verify and send activation Mail to user 
-ownerRoute.route('/verifyEmail')
+influencer.route('/verifyEmail')
     .post((req, res) => {
-        ownerController.verifyEmail(req.body).then(result => {
+        influencerController.verifyEmail(req.body).then(result => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
-                message: CONSTANT.VERFIEDTRUE
+                message: CONSTANT.VERFIEDTRUESTATUS
             })
         }).catch(err => {
-            return res.json({ data: err, message: CONSTANT.NOTVERIFIED, success: CONSTANT.FALSE })
+            return res.json({ data: err, message: CONSTANT.NOTVERIFIED, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //VERFIFY
-ownerRoute.route('/verify')
+influencer.route('/verify')
     .get((req, res) => {
-        ownerController.verify(req.query).then(result => {
+        influencerController.verify(req.query).then(result => {
 
             return res.send(`<h1 style="text-align:center; font-size:100px" >Verified successfully</h1>`)
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, status: CONSTANT.FALSESTATUS, success: CONSTANT.FALSE })
+            return res.json({ message: error, status: CONSTANT.FALSESTATUSSTATUS, success: CONSTANT.FALSESTATUS })
         })
 
     })
 
 
 // Resend
-ownerRoute.route('/resendVerification')
+influencer.route('/resendVerification')
     .put((req, res) => {
-        ownerController.resendVerification(req.body).then(result => {
+        influencerController.resendVerification(req.body).then(result => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.VERIFYMAIL
             })
         }).catch(err => {
             console.log(err);
 
-            return res.json({ message: err, success: CONSTANT.FALSE })
+            return res.json({ message: err, success: CONSTANT.FALSESTATUS })
 
         })
     })
 
 //Check If Number Exists
-ownerRoute.route('/checkContactExists')
+influencer.route('/checkContactExists')
     .post((req, res) => {
-        ownerController.checkContactExists(req.body).then(result => {
+        influencerController.checkContactExists(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: result.message,
 
             })
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error.message, data: error.data, success: CONSTANT.FALSE })
+            return res.json({ message: error.message, data: error.data, success: CONSTANT.FALSESTATUS })
         })
 
     })
 
 
 
-ownerRoute.route('/forgetpassword').
+influencer.route('/forgetpassword').
     get((req, res) => {
         if (!(req.query.user || req.query.token)) {
             res.redirect('/server/app/views/404-page')
@@ -157,28 +157,28 @@ ownerRoute.route('/forgetpassword').
 
 //Forgot Password
 
-ownerRoute.route('/forget-password')
+influencer.route('/forget-password')
     .post((req, res) => {
 
-        ownerController.forgotPassword(req.body).then(result => {
+        influencerController.forgotPassword(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.CHANGEPASSWORDLINK
 
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 // Verify Passowrd
 
-ownerRoute.route('/forgetpassword').
+influencer.route('/forgetpassword').
     post((req, res) => {
-        ownerController.forgetPasswordVerify(req.body, req.query).then(
+        influencerController.forgetPasswordVerify(req.body, req.query).then(
             message => {
                 res.render('forgetPassword', { message: message, title: 'Forget password' })
             },
@@ -196,147 +196,147 @@ ownerRoute.route('/forgetpassword').
 
 //Add Vehicle
 
-ownerRoute.route('/addVehicle')
+influencer.route('/addVehicle')
     .post(upload.fields([{ name: 'vehiclePics', maxCount: 4 }, { name: 'verificationPhotos', maxCount: 6 }]), (req, res) => {
-        ownerController.addVehicle(req.body, req.files).then(result => {
+        influencerController.addVehicle(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.VEHCILEADDSUCEESS,
             })
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Add Vehicle
 
-ownerRoute.route('/displayVehicles/:ownerId')
+influencer.route('/displayVehicles/:ownerId')
     .get((req, res) => {
-        ownerController.displayVehicles(req.params.ownerId,req.query.page).then(info => {
+        influencerController.displayVehicles(req.params.ownerId, req.query.page).then(info => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: info.result,
                 count: info.count
             })
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Add Vehicle
-ownerRoute.route('/displayVehicleCategories')
+influencer.route('/displayVehicleCategories')
     .get((req, res) => {
-        ownerController.displayVehicleCategories().then(result => {
+        influencerController.displayVehicleCategories().then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result
             })
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 // Display Particular Vehicle to admin
-ownerRoute.route('/displayParticularVehicle/:vehicleId')
+influencer.route('/displayParticularVehicle/:vehicleId')
     .get((req, res) => {
-        ownerController.displayParticularVehicle(req.params.vehicleId).then(result => {
+        influencerController.displayParticularVehicle(req.params.vehicleId).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result
             })
         }).catch(error => {
             console.log(error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //availability of owner
-ownerRoute.route('/isAvailable')
+influencer.route('/isAvailable')
     .put((req, res) => {
         console.log(req.body)
-        ownerController.availability(req.body).then(result => {
+        influencerController.availability(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.UPDATEMSG,
             })
         }).catch(error => {
             console.log("error", error);
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //Complete Owner
-ownerRoute.route('/completeProfile')
+influencer.route('/completeProfile')
     .put(upload.fields([{ name: 'verificationPhotos', maxCount: 6 }]), (req, res) => {
-        ownerController.completeProfile(req.body, req.files).then(result => {
+        influencerController.completeProfile(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.UPDATEMSG,
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
-ownerRoute.route('/updateVehicle')
+influencer.route('/updateVehicle')
 
     .put(upload.fields([{ name: 'vehiclePics', maxCount: 6 }]), (req, res) => {
 
-        ownerController.updateVehicle(req.body, req.files).then(result => {
+        influencerController.updateVehicle(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.UPDATEMSG,
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 // Owner Login
 
-ownerRoute.route('/login')
+influencer.route('/login')
     .post((req, res) => {
 
-        ownerController.login(req.body).then(result => {
+        influencerController.login(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result
 
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 // Set Status Online /Offline
 
-ownerRoute.route('/setStatus')
+influencer.route('/setStatus')
     .patch((req, res) => {
 
-        ownerController.setStatus(req.body).then(result => {
+        influencerController.setStatus(req.body).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.UPDATEMSG
 
@@ -344,148 +344,148 @@ ownerRoute.route('/setStatus')
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Add Photos
-ownerRoute.route('/addPhotos').
+influencer.route('/addPhotos').
     patch(upload.fields([{ name: 'photos', maxCount: 10 }]), (req, res) => {
-        ownerController.addPhotos(req.body, req.files).then(result => {
+        influencerController.addPhotos(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.ADDSUCCESS
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Add Verification Photo
-ownerRoute.route('/addVerificationPhotos').
+influencer.route('/addVerificationPhotos').
     patch(upload.fields([{ name: 'verificationPhotos', maxCount: 10 }]), (req, res) => {
-        ownerController.addVerificationPhotos(req.body, req.files).then(result => {
+        influencerController.addVerificationPhotos(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.ADDSUCCESS
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 // Accept Request
 
-ownerRoute.route('/acceptDenyRequest').
+influencer.route('/acceptDenyRequest').
     patch((req, res) => {
-        ownerController.acceptDenyRequest(req.body).then(result => {
+        influencerController.acceptDenyRequest(req.body).then(result => {
             var message
             if (result.status == 'confirmed')
                 message = CONSTANT.ACCEPTREQUEST
             else
                 message = CONSTANT.REQUESTDECLINE
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: message,
                 data: result
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 // Change Password
 
-ownerRoute.route('/changePassword').
+influencer.route('/changePassword').
     put((req, res) => {
-        ownerController.changePassword(req.body).then(result => {
+        influencerController.changePassword(req.body).then(result => {
             return res.json({
 
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.UPDATEMSG,
                 data: result
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //update Service Details
-ownerRoute.route('/updateOwner').
+influencer.route('/updateOwner').
     put(upload.fields([{ name: 'profilePic', maxCount: 1 }]), (req, res) => {
         console.log(req.body);
 
-        ownerController.updateOwner(req.body, req.files).then(result => {
+        influencerController.updateOwner(req.body, req.files).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.UPDATEMSG,
                 data: result
             })
         }).catch(error => {
             console.log("error", error);
 
-            return res.json({ message: error.message, success: CONSTANT.FALSE })
+            return res.json({ message: error.message, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //Get request List
-ownerRoute.route('/getRequestList')
+influencer.route('/getRequestList')
     .post((req, res) => {
-        ownerController.getRequestList(req.body).then(result => {
+        influencerController.getRequestList(req.body).then(result => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result
             })
         }).catch(err => {
             console.log(err);
-            return res.json({ message: err, success: CONSTANT.FALSE })
+            return res.json({ message: err, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //get documentList of particular owner
-ownerRoute.route('/getdocs/:ownerId')
+influencer.route('/getdocs/:ownerId')
     .get((req, res) => {
-        ownerController.getDocument(req.params.ownerId).then(result => {
+        influencerController.getDocument(req.params.ownerId).then(result => {
             return res.json({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result
             })
         }).catch(error => {
             console.log(error);
-            return res.json({ message: error, success: CONSTANT.FALSE })
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Provide Ratings to User
-ownerRoute.route('/provideUserRatings')
+influencer.route('/provideUserRatings')
     .patch((req, res) => {
-        ownerController.provideUserRatings(req.body).then(result => {
+        influencerController.provideUserRatings(req.body).then(result => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 message: CONSTANT.UPDATEMSG
             })
         }).catch(err => {
             console.log(err);
-            return res.json({ message: err, success: CONSTANT.FALSE })
+            return res.json({ message: err, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Provide Ratings 
-ownerRoute.route('/ratings')
+influencer.route('/ratings')
     .post((req, res) => {
-        ownerController.ownerRatings(req.body).then(items => {
+        influencerController.ownerRatings(req.body).then(items => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: items.result,
                 count: items.totalCount,
                 ownerAvgRate: items.averageRate,
@@ -494,136 +494,136 @@ ownerRoute.route('/ratings')
             })
         }).catch(err => {
             console.log(err);
-            return res.json({ message: err, success: CONSTANT.FALSE })
+            return res.json({ message: err, success: CONSTANT.FALSESTATUS })
         })
     })
 
 //Add issue by service
-ownerRoute.route('/addIssue')
+influencer.route('/addIssue')
     .post(upload.fields([{ name: 'issueimage', maxCount: 1 }]), (req, res) => {
-        ownerController.addIssue(req.body, req.files).then(result => {
+        influencerController.addIssue(req.body, req.files).then(result => {
             return res.send({
-                success: CONSTANT.TRUE,
+                success: CONSTANT.TRUESTATUS,
                 data: result,
                 message: CONSTANT.ISSUESUCCESSFULLY
             })
         }).catch(err => {
             console.log(err);
-            return res.json({ message: err, success: CONSTANT.FALSE })
+            return res.json({ message: err, success: CONSTANT.FALSESTATUS })
         })
     })
 
 
 //get notification of particular owner
-ownerRoute.route('/notification')
-.post((req, res) => {
-    ownerController.getNotification(req.body).then((result, totalItem) => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result,
-            totalItem: totalItem
+influencer.route('/notification')
+    .post((req, res) => {
+        influencerController.getNotification(req.body).then((result, totalItem) => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result,
+                totalItem: totalItem
+            })
+        }).catch(error => {
+            console.log(error);
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        console.log(error);
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-}) 
 
 //get notification of particular owner
-ownerRoute.route('/bookings')
-.post((req, res) => {
-    ownerController.getOwnerBooking(req.body).then((result, totalItem) => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result,
-            totalItem: totalItem
+influencer.route('/bookings')
+    .post((req, res) => {
+        influencerController.getOwnerBooking(req.body).then((result, totalItem) => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result,
+                totalItem: totalItem
+            })
+        }).catch(error => {
+            console.log(error);
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        console.log(error);
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-}) 
 
-ownerRoute.route('/cancleBooking')
-.post((req, res) => {
-    ownerController.cancleBooking(req.body).then(result => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result
+influencer.route('/cancleBooking')
+    .post((req, res) => {
+        influencerController.cancleBooking(req.body).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result
+            })
+        }).catch(error => {
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-})
 
-ownerRoute.route('/bookingEarning')
-.post((req, res) => {
-    ownerController.bookingEarning(req.body).then(result => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result.result,
-            totalItem: result.totalCount
+influencer.route('/bookingEarning')
+    .post((req, res) => {
+        influencerController.bookingEarning(req.body).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result.result,
+                totalItem: result.totalCount
+            })
+        }).catch(error => {
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-})
 
 //get notification of particular owner
-ownerRoute.route('/pastBookings')
-.post((req, res) => {
-    ownerController.getOwnerPastBooking(req.body).then((result, totalItem) => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result,
-            totalItem: totalItem
+influencer.route('/pastBookings')
+    .post((req, res) => {
+        influencerController.getOwnerPastBooking(req.body).then((result, totalItem) => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result,
+                totalItem: totalItem
+            })
+        }).catch(error => {
+            console.log(error);
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        console.log(error);
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-}) 
 //get notification of particular owner
-ownerRoute.route('/booking/:bookingId')
-.get((req, res) => {
-    ownerController.getBookingsById(req.params.bookingId).then((result, totalItem) => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result,
-            totalItem: totalItem
+influencer.route('/booking/:bookingId')
+    .get((req, res) => {
+        influencerController.getBookingsById(req.params.bookingId).then((result, totalItem) => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result,
+                totalItem: totalItem
+            })
+        }).catch(error => {
+            console.log(error);
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        console.log(error);
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-}) 
 
 // delete vehicle 
 
-ownerRoute.route('/deleteVehicle/:vehicle_id')
-.get((req, res) => {
-    ownerController.deleteVehicle(req.params.vehicle_id).then(result => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result
+influencer.route('/deleteVehicle/:vehicle_id')
+    .get((req, res) => {
+        influencerController.deleteVehicle(req.params.vehicle_id).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result
+            })
+        }).catch(error => {
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-})
 
 // delete vehicle 
 
-ownerRoute.route('/deleteVehicleMedia/:image_id')
-.get((req, res) => {
-    ownerController.deleteVehicleImage(req.params.image_id).then(result => {
-        return res.json({
-            success: CONSTANT.TRUE,
-            data: result
+influencer.route('/deleteVehicleMedia/:image_id')
+    .get((req, res) => {
+        influencerController.deleteVehicleImage(req.params.image_id).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result
+            })
+        }).catch(error => {
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
         })
-    }).catch(error => {
-        return res.json({ message: error, success: CONSTANT.FALSE })
     })
-})
 
-module.exports = ownerRoute;
+module.exports = influencer;

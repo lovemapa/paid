@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const flash = require('connect-flash');
 const session = require('express-session')
 const app = new express();
+const cors = require("cors");
 const socketRoute = require('../server/app/Socket/socketRoute');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -30,6 +31,7 @@ app.use(session({
     }
 }))
 app.use(flash());
+app.use(cors());
 app.use(morgan('dev'))
 app.use(function (req, res, next) {
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
