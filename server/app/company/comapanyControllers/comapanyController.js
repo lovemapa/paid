@@ -536,14 +536,14 @@ class userModule {
     }
 
     getCampaigns(id) {
-        return new Promise((resolve, reject) => {
+       return new Promise((resolve, reject) => {
 
             if (!id) {
                 reject(CONSTANT.MISSINGCOMPANYID)
 
             }
             else {
-                campaign.findOne({ companyId: id }).select('_id name brandPromoting dateForContentLive').then(result => {
+                campaign.find({ companyId: id }).select('_id name brandPromoting dateForContentLive').then(result => {
                     resolve(result)
                 }).catch(err => {
                     console.log(err);

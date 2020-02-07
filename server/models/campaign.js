@@ -15,7 +15,7 @@ var campaignModelSchema = new Schema({
     genderType: { type: String },
     ageGroups: [{ type: Number }],
     creatorNiche: [{ type: String }],
-    targetLocation: [{ type: String }],
+    targetLocation: { type: String },
     targetLanguage: [{ type: String, enum: ['English', 'Spanish', 'French'], default: 'English' }],
     followingSize: { type: Number, default: 2 },
     contentsFormat: [{ type: String, enum: ['Stories', 'Photos', 'Videos', 'Caraousels'] }],
