@@ -1,7 +1,7 @@
 const Jwt = require('jsonwebtoken');
 const env = require('../config/env')();
 const privateKey = env.JWTOKEN;
-const UserModel = require('../models/users');
+const UserModel = require('../../models/influencer');
 module.exports = (req, res, next) => {
     var token;
     var influencerToken;
@@ -17,7 +17,13 @@ module.exports = (req, res, next) => {
         });
     }
     Jwt.verify(token, privateKey, (err, token) => {
-        if (err) { return res.status(401).json({ resStatus: 0, resMessage: 'The token is not valid', }); }
+        if (err) {
+            if (err.message == "jwt expired")
+                return res.status(401).json({ resStatus: 0, resMessage: "Session Expired,Please login again" });
+            else {
+                return res.status(401).json({ resStatus: 0, resMessage: "Invalid token" });
+            }
+        }
         else {
             //    console.log(`token details `, token, token.id, ` req.headers.token `, req.headers.token);
             UserModel.findOne({ "_id": token.id, token: req.headers.token }, (err, user) => {

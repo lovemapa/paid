@@ -3,15 +3,15 @@ const influnce = require('../../../models/influencer')
 const CONSTANT = require('../../../constant')
 const commonFunctions = require('../../common/controllers/commonFunctions')
 const commonController = require('../../common/controllers/commonController')
-const vehicleSchema = require('../../../models/vehicleImageModel')
-const ownerVerfiySchema = require('../../../models/ownerImagesModel')
+
+
 const notificationModel = require('../../../models/notificationModel')
-const vehicleRatingModel = require('../../../models/vehicleRatingModel')
-const bookingModel = require('../../../models/bookingModel')
+
+
 const rn = require('random-number')
 const userModel = require('../../../models/company')
-const carCategoryModel = require('../../../models/carCategoryModel')
-const vehicleModel = require('../../../models/vehicleModel')
+
+
 const Jwt = require('jsonwebtoken');
 const moment = require('moment');
 const privateKey = 'myprivatekey'
@@ -675,14 +675,13 @@ class owner {
 
                     const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
 
-                    console.log(token);
                     influnce.findOneAndUpdate({ email: data.email },
                         { $set: { token: token } },
 
                         { new: true }).select('token password email firstName lastName')
 
                         .then(updateResult => {
-                            console.log(updateResult);
+
 
                             // console.log(commonFunctions.compareHash(data.password, updateResult.password));
 

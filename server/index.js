@@ -9,7 +9,6 @@ const flash = require('connect-flash');
 const session = require('express-session')
 const app = new express();
 const cors = require("cors");
-const socketRoute = require('../server/app/Socket/socketRoute');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
@@ -76,7 +75,7 @@ mongoose.set('useFindAndModify', false);
 
 
 // mongoose.set('debug', true);
-socketRoute(io)
+// socketRoute(io)
 
 
 http.listen(process.env.PORT, () => {

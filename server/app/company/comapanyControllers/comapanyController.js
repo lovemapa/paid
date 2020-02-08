@@ -1,25 +1,17 @@
 'use strict'
 const company = require('../../../models/company')
 const campaign = require('../../../models/campaign')
-const ownerModel = require('../../../models/ownerModel')
 const CONSTANT = require('../../../constant')
 const commonFunctions = require('../../common/controllers/commonFunctions')
 const commonController = require('../../common/controllers/commonController')
 const moment = require('moment')
 const rn = require('random-number')
-const couponModel = require('../../../models/discountCouponModel')
-const taxModel = require('../../../models/taxModel')
+
 const Jwt = require('jsonwebtoken');
-const userPromoCode = require('../../../models/userPromoCode')
-const promoCodeModel = require('../../../models/promoCodeModel')
+
 const privateKey = 'myprivatekey'
 const notificationModel = require('../../../models/notificationModel')
-const userIssue = require('../../../models/usersIssueModel')
-const vehicleModel = require('../../../models/vehicleModel')
-const vehicleRatingModel = require('../../../models/vehicleRatingModel')
-const pickModel = require('../../../models/pickupModel')
-const helpCenterModel = require('../../../models/helpCenterModel')
-const bookingModel = require('../../../models/bookingModel')
+
 
 const mongoose = require('mongoose');
 
