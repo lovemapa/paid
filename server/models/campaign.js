@@ -18,7 +18,7 @@ var campaignModelSchema = new Schema({
     targetLocation: { type: String },
     targetLanguage: [{ type: String, enum: ['English', 'Spanish', 'French'], default: 'English' }],
     followingSize: { type: Number, default: 2 },
-    contentsFormat: [{ type: String, enum: ['Stories', 'Photos', 'Videos', 'Caraousels'] }],
+    contentsFormat: [{ type: String, enum: ['Stories', 'Photos', 'Videos', 'Carousels'] }],
     campaignBudget: Number,
     organicPost: Number,
     whiteListBudget: Number,
