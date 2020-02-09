@@ -6,7 +6,7 @@ const brandModel = require('../../models/brands')
 const campaignModel = require('../../models/campaign')
 const targetModel = require('../../models/targetLocations')
 const niches = require('../../models/niche')
-
+const mongoose = require('mongoose')
 const moment = require('moment');
 
 class messageBroadcast {
@@ -46,6 +46,70 @@ class messageBroadcast {
     getNiches() {
         return new Promise(async (resolve, reject) => {
             let data = await niches.find({})
+            resolve(data)
+        })
+    }
+
+    getParticularCampaign(id) {
+        return new Promise(async (resolve, reject) => {
+            let data = await campaignModel.aggregate([
+                { $match: { "_id": mongoose.Types.ObjectId(id) } },
+
+
+                {
+                    $project:
+                    {
+                        creatorNiche: 1,
+                        creatorNiche: 1,
+                        targetLanguage: 1,
+                        name: 1,
+                        brandPromoting: 1,
+                        dateForContentLive: 1,
+                        awareness: 1,
+                        campaignBudget: 1,
+                        requirement: 1,
+                        contentsFormat: 1,
+                        hashtag: 1, content: 1,
+                        createdAt: 1,
+                        followingSize: {
+                            $switch: {
+                                branches: [
+                                    { case: { $eq: ["$followingSize", 1] }, then: "Small(5k-25k followers)" },
+                                    { case: { $eq: ["$followingSize", 2] }, then: "Medium(25k-100k followers)" },
+                                    { case: { $eq: ["$followingSize", 3] }, then: "Large(10k+ followers)" },
+
+
+                                ]
+                            }
+                        },
+                        ageGroups:
+                        {
+                            $map:
+                            {
+                                input: "$ageGroups",
+                                as: "ageGroups",
+                                in: {
+                                    $switch: {
+                                        branches: [
+                                            { case: { $eq: ["$$ageGroups", 1] }, then: "17 - 19" },
+                                            { case: { $eq: ["$$ageGroups", 2] }, then: "20-24" },
+                                            { case: { $eq: ["$$ageGroups", 3] }, then: "25-29" },
+                                            { case: { $eq: ["$$ageGroups", 4] }, then: "30 - 34" },
+                                            { case: { $eq: ["$$ageGroups", 5] }, then: "35-39" },
+                                            { case: { $eq: ["$$ageGroups", 6] }, then: "40-49" },
+                                            { case: { $eq: ["$$ageGroups", 7] }, then: "50-49" },
+                                            { case: { $eq: ["$$ageGroups", 8] }, then: "60+" },
+
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+
+            ])
             resolve(data)
         })
     }

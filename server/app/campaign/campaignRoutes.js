@@ -53,6 +53,22 @@ campaignRoute.route('/getNiches')
         })
     })
 
+//get particular campaign
+
+campaignRoute.route('/getParticularCampaign/:campaignId')
+    .get(companyAuth, (req, res) => {
+        campaignController.getParticularCampaign(req.params.campaignId).then(result => {
+            return res.json({
+                success: CONSTANT.TRUESTATUS,
+                data: result
+            })
+        }).catch(error => {
+            console.log(error);
+            return res.json({ message: error, success: CONSTANT.FALSESTATUS })
+        })
+    })
+
+
 campaignRoute.route('/createTargetLocation')
     .post((req, res) => {
         campaignController.createTargetLocation(req.body).then(result => {
