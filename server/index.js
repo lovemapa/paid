@@ -11,7 +11,7 @@ const app = new express();
 const cors = require("cors");
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-
+const socketRoute = require('../server/app/Socket/socketRoute')
 
 
 dotenv.config();
@@ -75,7 +75,7 @@ mongoose.set('useFindAndModify', false);
 
 
 // mongoose.set('debug', true);
-// socketRoute(io)
+socketRoute(io)
 
 
 http.listen(process.env.PORT, () => {
