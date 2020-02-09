@@ -1,5 +1,5 @@
 'use strict'
-const influnce = require('../../../models/influencer')
+const influence = require('../../../models/influencer')
 const CONSTANT = require('../../../constant')
 const commonFunctions = require('../../common/controllers/commonFunctions')
 const commonController = require('../../common/controllers/commonController')
@@ -33,13 +33,14 @@ class owner {
                     email: data.email,
                     isDeleted: false
                 };
-                influnce.count(checkCriteria).then(async result => {
+                userModel.count(checkCriteria).then(async result => {
                     if (result) {
                         return reject(CONSTANT.UNIQUEEMAILANDUSERNAME)
                     } else {
                         if (data.password)
                             data.password = commonFunctions.hashPassword(data.password)
-                        const user = new influnce(data)
+                        data.type = 'influencer'
+                        const user = new userModel(data)
                         const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
                         user.set('token', token, { strict: false })
                         user.save().then((saveresult) => {
@@ -669,16 +670,16 @@ class owner {
 
             else {
 
-                const user = await influnce.findOne({ email: data.email })
+                const user = await userModel.findOne({ email: data.email })
                 if (user) {
 
 
                     const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
 
-                    influnce.findOneAndUpdate({ email: data.email },
+                    userModel.findOneAndUpdate({ email: data.email },
                         { $set: { token: token } },
 
-                        { new: true }).select('token password email firstName lastName')
+                        { new: true }).select('token password type email firstName lastName')
 
                         .then(updateResult => {
 

@@ -11,8 +11,17 @@ var companyModelSchema = new Schema({
     password: { type: String },
     date: { type: Number },
     companyName: { type: String },
+    type: { type: String },
     profilePic: { type: String, default: '/default.png' },
     isDeleted: { type: Number, default: 0 },
+
+    gender: { type: String },
+    date: { type: Number },
+    dob: { type: Number },
+    facebookId: { type: String },
+    youtubeId: { type: String },
+    instagramId: { type: String },
+    primaryCategory: { type: String },
     token: { type: String }
 
 }, { timestamps: true })

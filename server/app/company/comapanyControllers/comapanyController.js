@@ -68,7 +68,14 @@ class userModule {
     createUser(data) {
         if (data.password)
             data.password = commonFunctions.hashPassword(data.password)
+        let type
+        if (data.companyName) {
+            type = 'company'
+        }
+        else
+            type = 'creator'
         const user = new company({
+            type: type,
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
@@ -110,7 +117,7 @@ class userModule {
                     company.findOneAndUpdate({ email: data.email },
                         { $set: { token: token } },
 
-                        { new: true }).select('token password email firstName lastName')
+                        { new: true }).select('token password email type firstName lastName')
 
                         .then(updateResult => {
 

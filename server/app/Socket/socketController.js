@@ -5,7 +5,7 @@ const Constant = require('../../constants/constant')
 const mongoose = require("mongoose");
 const userModel = require('../../models/company')
 const moment = require('moment')
-
+const blockModel = require('../../models/blockUserModel')
 
 
 class socketController {
@@ -34,8 +34,8 @@ class socketController {
 
                                 io.to(socketInfo[data.to]).emit('listenMessage', { success: Constant.TRUE, result: populatedData })
 
-                                let msg = populatedData.message
-                                notif.sendUserNotification(data.from, data.to, msg, populatedData, 1, populatedData.from.firstName + ' ' + populatedData.from.lastName)
+                                // let msg = populatedData.message
+                                // notif.sendUserNotification(data.from, data.to, msg, populatedData, 1, populatedData.from.firstName + ' ' + populatedData.from.lastName)
                             }
                             else {
                                 groupModel.findOne({ _id: data.groupId }).then(result => {
