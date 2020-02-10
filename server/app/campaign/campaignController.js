@@ -52,6 +52,8 @@ class messageBroadcast {
 
     getParticularCampaign(id) {
         return new Promise(async (resolve, reject) => {
+            if (!id)
+                reject("Please provide Campaign ID")
             let data = await campaignModel.aggregate([
                 { $match: { "_id": mongoose.Types.ObjectId(id) } },
 

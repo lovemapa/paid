@@ -35,7 +35,7 @@ class userModule {
                         return reject(CONSTANT.UNIQUEEMAILANDUSERNAME)
                     } else {
                         const user = this.createUser(data)
-                        const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
+                        const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 30 * 60 })
                         if (file) {
                             file.profilePic.map(result => {
                                 if (result)
@@ -113,7 +113,7 @@ class userModule {
                 const user = await company.findOne({ email: data.email })
                 if (user) {
 
-                    const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 15 * 60 })
+                    const token = await Jwt.sign({ email: data.email, id: user._id, }, privateKey, { expiresIn: 30 * 60 })
                     company.findOneAndUpdate({ email: data.email },
                         { $set: { token: token } },
 
